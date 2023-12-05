@@ -15,13 +15,30 @@ const material = new THREE.MeshBasicMaterial({
 const mesh = new THREE.Mesh(floorGeometry, material);
 scene.add(mesh);
 
-// Sizes
+/**
+ * Sizes
+ */
 const sizes = {
-  width: 800,
-  height: 600,
+  width: window.innerWidth,
+  height: window.innerHeight,
 };
 
-// Camera
+// Resize function
+window.addEventListener("resize", () => {
+  // Update sizes
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+
+  // Update camera
+  camera.aspect = sizes.width / sizes.height;
+  camera.updateProjectionMatrix();
+
+  renderer.setSize(sizes.width, sizes.height);
+});
+
+/**
+ * Camera
+ */
 const camera = new THREE.PerspectiveCamera(
   45,
   sizes.width / sizes.height,
@@ -38,16 +55,18 @@ scene.add(camera);
 const controls = new OrbitControls(camera, canvas);
 controls.enableDamping = true;
 
-// Renderer
+/**
+ * Renderer
+ */
 const renderer = new THREE.WebGLRenderer({
   canvas: canvas,
 });
-
 renderer.setSize(sizes.width, sizes.height);
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-renderer.render(scene, camera);
-
-// Animate
+/**
+ * Animate
+ */
 const clock = new THREE.Clock();
 
 const tick = () => {
