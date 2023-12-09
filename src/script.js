@@ -1,5 +1,12 @@
 import * as THREE from "three";
 import { OrbitControls } from "three/addons/controls/OrbitControls.js";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+
+/**
+ * Base
+ */
+
+// Debug
 
 // Canvas
 const canvas = document.querySelector("canvas.webgl");
@@ -7,13 +14,27 @@ const canvas = document.querySelector("canvas.webgl");
 // Scene
 const scene = new THREE.Scene();
 
-// Object
-const floorGeometry = new THREE.PlaneGeometry(1, 1, 1, 1);
-const material = new THREE.MeshBasicMaterial({
-  color: 0x808080,
+/**
+ * Models
+ */
+const gltfLoader = new GLTFLoader();
+gltfLoader.load("/models/pole.glb", (gltf) => {
+  gltf.scene.scale.set(0.05, 0.05, 0.05);
+  gltf.scene.rotation.x = Math.PI / 2;
+  gltf.scene.position.z = 0.01;
+  scene.add(gltf.scene);
 });
-const mesh = new THREE.Mesh(floorGeometry, material);
-scene.add(mesh);
+
+/**
+ * Floor
+ */
+const floor = new THREE.Mesh(
+  new THREE.PlaneGeometry(1, 1, 1, 1),
+  new THREE.MeshBasicMaterial({
+    color: 0x808080,
+  })
+);
+scene.add(floor);
 
 /**
  * Sizes
@@ -49,7 +70,7 @@ const camera = new THREE.PerspectiveCamera(
 camera.position.x = 3;
 camera.position.y = 3;
 camera.position.z = 3;
-camera.lookAt(mesh.position);
+camera.lookAt(floor.position);
 scene.add(camera);
 
 // Controls
