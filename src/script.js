@@ -45,15 +45,39 @@ scene.add(floor);
  * Festivus Pole
  */
 // Base of pole
-const baseColorTexture = textureLoader.load(
-  "/textures/wood/raw_plank_wall_diff_1k.jpg"
-);
-const baseNormalTexture = textureLoader.load(
-  "/textures/wood/raw_plank_wall_nor_gl_1k.png"
-);
-const baseAORougnessMetalnessTexture = textureLoader.load(
-  "/textures/wood/raw_plank_wall_arm_1k.jpg"
-);
+// const baseColorTexture = textureLoader.load(
+//   "/textures/wood/raw_plank_wall_diff_1k.jpg",
+//   function (texture) {
+//     texture.wrapS = texture.wrapT = THREE.ClampToEdgeWrapping;
+//     texture.repeat.set(0.25, 0.25);
+//     texture.minFilter = THREE.LinearFilter; // Prevent mipmapping blur
+//     texture.rotation = Math.PI / 2; // Rotate the texture by 90 degrees
+//     texture.center.set(0.5, 0.5); // Set the center for rotation
+//   }
+// );
+// baseColorTexture.colorSpace = THREE.SRGBColorSpace;
+// baseColorTexture.wrapS = THREE.RepeatWrapping;
+// baseColorTexture.wrapT = THREE.RepeatWrapping;
+
+// const baseNormalTexture = textureLoader.load(
+//   "/textures/wood/raw_plank_wall_nor_gl_1k.png",
+//   function (texture) {
+//     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+//     texture.repeat.set(0.5, 0.5);
+//     texture.rotation = Math.PI / 2; // Rotate the texture by 90 degrees
+//     texture.center.set(0.5, 0.5); // Set the center for rotation
+//   }
+// );
+
+// const baseAORoughnessMetalnessTexture = textureLoader.load(
+//   "/textures/wood/raw_plank_wall_arm_1k.jpg",
+//   function (texture) {
+//     texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+//     texture.repeat.set(0.5, 0.5);
+//     texture.rotation = Math.PI / 2; // Rotate the texture by 90 degrees
+//     texture.center.set(0.5, 0.5); // Set the center for rotation
+//   }
+// );
 
 const gltfLoader = new GLTFLoader();
 gltfLoader.load("/models/stand.glb", (gltf) => {
@@ -61,18 +85,18 @@ gltfLoader.load("/models/stand.glb", (gltf) => {
   gltf.scene.rotation.x = Math.PI / 2;
   gltf.scene.position.z = 0.1;
 
-  gltf.scene.traverse((child) => {
-    if (child.isMesh) {
-      const material = new THREE.MeshStandardMaterial({
-        map: baseColorTexture,
-        normalMap: baseNormalTexture,
-        aoMap: baseAORougnessMetalnessTexture,
-        roughnessMap: baseAORougnessMetalnessTexture,
-        metalnessMap: baseAORougnessMetalnessTexture,
-      });
-      child.material = material;
-    }
-  });
+  // gltf.scene.traverse((child) => {
+  //   if (child.isMesh) {
+  //     const material = new THREE.MeshStandardMaterial({
+  //       map: baseColorTexture,
+  //       // normalMap: baseNormalTexture,
+  //       // aoMap: baseAORoughnessMetalnessTexture,
+  //       // roughnessMap: baseAORoughnessMetalnessTexture,
+  //       // metalnessMap: baseAORoughnessMetalnessTexture,
+  //     });
+  //     child.material = material;
+  //   }
+  // });
 
   scene.add(gltf.scene);
 });
