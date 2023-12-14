@@ -3,8 +3,24 @@ import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 
 /**
- * Base
+ * Textures
  */
+const loadingManager = new THREE.LoadingManager();
+
+loadingManager.onStart = () => {
+  console.log("onStart");
+};
+loadingManager.onLoad = () => {
+  console.log("onLoad");
+};
+loadingManager.onProgress = () => {
+  console.log("onProgress");
+};
+loadingManager.onError = () => {
+  console.log("onError");
+};
+
+const textureLoader = new THREE.TextureLoader(loadingManager);
 
 // Debug
 
@@ -15,26 +31,65 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
- * Models
- */
-const gltfLoader = new GLTFLoader();
-gltfLoader.load("/models/pole.glb", (gltf) => {
-  gltf.scene.scale.set(0.05, 0.05, 0.05);
-  gltf.scene.rotation.x = Math.PI / 2;
-  gltf.scene.position.z = 0.01;
-  scene.add(gltf.scene);
-});
-
-/**
  * Floor
  */
 const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(1, 1, 1, 1),
+  new THREE.PlaneGeometry(8, 8, 1, 1),
   new THREE.MeshBasicMaterial({
     color: 0x808080,
   })
 );
 scene.add(floor);
+
+/**
+ * Festivus Pole
+ */
+// Base of pole
+const baseColorTexture = textureLoader.load(
+  "/textures/wood/raw_plank_wall_diff_1k.jpg"
+);
+const baseNormalTexture = textureLoader.load(
+  "/textures/wood/raw_plank_wall_nor_gl_1k.png"
+);
+const baseAORougnessMetalnessTexture = textureLoader.load(
+  "/textures/wood/raw_plank_wall_arm_1k.jpg"
+);
+
+const gltfLoader = new GLTFLoader();
+gltfLoader.load("/models/stand.glb", (gltf) => {
+  gltf.scene.scale.set(0.3, 0.3, 0.3);
+  gltf.scene.rotation.x = Math.PI / 2;
+  gltf.scene.position.z = 0.1;
+
+  gltf.scene.traverse((child) => {
+    if (child.isMesh) {
+      const material = new THREE.MeshStandardMaterial({
+        map: baseColorTexture,
+        normalMap: baseNormalTexture,
+        aoMap: baseAORougnessMetalnessTexture,
+        roughnessMap: baseAORougnessMetalnessTexture,
+        metalnessMap: baseAORougnessMetalnessTexture,
+      });
+      child.material = material;
+    }
+  });
+
+  scene.add(gltf.scene);
+});
+
+gltfLoader.load("/models/pole.glb", (gltf) => {
+  gltf.scene.scale.set(0.3, 0.3, 0.3);
+  gltf.scene.rotation.x = Math.PI / 2;
+  gltf.scene.position.z = 0.1;
+
+  scene.add(gltf.scene);
+});
+
+/**
+ * Lights
+ */
+const ambientLight = new THREE.AmbientLight(0xffffff, 2.4);
+scene.add(ambientLight);
 
 /**
  * Sizes
